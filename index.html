@@ -40,7 +40,8 @@
             background-color: var(--bg-dark);
             color: var(--text-main);
             line-height: 1.6;
-            /* Removing overflow-x hidden here to prevent sticky issues in some browsers */
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
         /* --- TYPOGRAPHY --- */
@@ -57,19 +58,23 @@
             --spacing-xl: 4rem;
         }
 
-        h1 { font-size: 2.5rem; letter-spacing: -1px; }
-        h2 { font-size: 1.8rem; border-left: 4px solid var(--accent); padding-left: var(--spacing-md); margin-top: var(--spacing-xl); }
-        h3 { font-size: 1.25rem; color: var(--accent); margin-top: var(--spacing-lg); }
-        p { margin-bottom: var(--spacing-md); color: var(--text-muted); }
+        h1 { font-size: clamp(2rem, 4vw, 2.5rem); letter-spacing: -1px; }
+        h2 { font-size: clamp(1.4rem, 3vw, 1.8rem); border-left: 4px solid var(--accent); padding-left: var(--spacing-md); margin-top: var(--spacing-xl); }
+        h3 { font-size: clamp(1.1rem, 2.5vw, 1.25rem); color: var(--accent); margin-top: var(--spacing-lg); }
+        p { margin-bottom: var(--spacing-md); color: var(--text-muted); font-size: clamp(0.95rem, 2.2vw, 1rem); }
         ul { list-style: none; }
         a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
         a:hover { color: var(--primary); }
 
         /* --- UTILITIES --- */
         .container {
-            max-width: 1200px;
+            width: min(1200px, 100%);
             margin: 0 auto;
-            padding: 0 var(--spacing-md);
+            padding: 0 clamp(1rem, 4vw, 2.5rem);
+        }
+
+        main {
+            padding-block: var(--spacing-lg);
         }
 
         .badge {
@@ -113,14 +118,14 @@
             position: relative;
             z-index: 1;
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: var(--spacing-lg);
             align-items: center;
         }
 
         .meta-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: var(--spacing-md);
             background: var(--bg-card);
             padding: var(--spacing-md);
@@ -150,22 +155,26 @@
             height: var(--nav-height); /* Explicit height */
             display: flex;
             align-items: center;
+            padding-inline: clamp(1rem, 3vw, 2rem);
+            backdrop-filter: blur(6px);
         }
 
         nav .container {
             width: 100%;
             display: flex;
             align-items: center;
+            padding: 0;
         }
 
         nav ul {
             display: flex;
             overflow-x: auto; /* Allow horizontal scroll on mobile */
-            gap: var(--spacing-lg);
+            gap: clamp(1rem, 3vw, 2rem);
             width: 100%;
             padding: 0; /* Reset padding */
             white-space: nowrap;
             -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+            scroll-snap-type: x proximity;
             
             /* Hide scrollbar for cleaner look */
             scrollbar-width: none; /* Firefox */
@@ -175,6 +184,8 @@
         nav ul::-webkit-scrollbar { 
             display: none;  /* Chrome/Safari */
         }
+
+        nav li { scroll-snap-align: start; }
 
         nav a {
             color: var(--text-muted);
@@ -194,19 +205,19 @@
 
         /* --- SECTIONS & CARDS --- */
         section {
-            padding: var(--spacing-lg) 0;
+            padding: clamp(1.5rem, 5vw, 3rem) 0;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
         .grid-2 {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: var(--spacing-lg);
         }
         
         .grid-3 {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: var(--spacing-md);
         }
 
@@ -240,13 +251,13 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 600px;
         }
 
         th, td {
             padding: var(--spacing-md);
             text-align: left;
             border-bottom: 1px solid var(--border);
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
         }
 
         th {
@@ -334,6 +345,11 @@
         }
 
         /* --- RESPONSIVE --- */
+        @media (max-width: 1024px) {
+            header { padding: var(--spacing-lg) 0; }
+            nav { height: auto; }
+        }
+
         @media (max-width: 768px) {
             .header-content { grid-template-columns: 1fr; }
             .grid-2 { grid-template-columns: 1fr; }
@@ -341,9 +357,53 @@
             h2 { font-size: 1.5rem; }
             
             /* Mobile Nav Adjustments */
-            nav { height: auto; padding: 0.5rem 0; }
-            nav ul { padding: 0.5rem; }
+            nav { height: auto; padding: 0.5rem clamp(1rem, 4vw, 2rem); }
+            nav ul { padding: 0.25rem 0; }
             nav a { font-size: 0.85rem; }
+        }
+
+        @media (max-width: 600px) {
+            .meta-grid { grid-template-columns: 1fr; }
+            .table-container { padding: var(--spacing-sm); }
+            table, thead, tbody, th, tr, td {
+                display: block;
+                width: 100%;
+            }
+            thead {
+                border: 0;
+                clip: rect(0 0 0 0);
+                height: 1px;
+                width: 1px;
+                margin: -1px;
+                overflow: hidden;
+                position: absolute;
+            }
+            tr {
+                margin-bottom: var(--spacing-md);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: var(--spacing-sm);
+                background: rgba(255,255,255,0.01);
+            }
+            td {
+                border: none;
+                border-bottom: 1px solid var(--border);
+                position: relative;
+                padding-left: calc(var(--spacing-md) + 1.5rem);
+            }
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: var(--spacing-md);
+                top: 50%;
+                transform: translateY(-50%);
+                font-weight: 600;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                letter-spacing: 0.08em;
+            }
+            td:last-child { border-bottom: none; }
         }
     </style>
 </head>
@@ -474,13 +534,13 @@
                     
                     <h3>Key Subdomains</h3>
                     <div class="table-container">
-                        <table style="min-width: 100%;">
+                        <table>
                             <tbody>
-                                <tr><td class="mono">admin.megacorpone.com</td><td><span class="badge high">High Value</span></td></tr>
-                                <tr><td class="mono">intranet.megacorpone.com</td><td>Internal Access</td></tr>
-                                <tr><td class="mono">vpn.megacorpone.com</td><td>Remote Access</td></tr>
-                                <tr><td class="mono">syslog.megacorpone.com</td><td>Logs</td></tr>
-                                <tr><td class="mono">snmp.megacorpone.com</td><td>Monitoring</td></tr>
+                                <tr><td class="mono" data-label="Subdomain">admin.megacorpone.com</td><td data-label="Context"><span class="badge high">High Value</span></td></tr>
+                                <tr><td class="mono" data-label="Subdomain">intranet.megacorpone.com</td><td data-label="Context">Internal Access</td></tr>
+                                <tr><td class="mono" data-label="Subdomain">vpn.megacorpone.com</td><td data-label="Context">Remote Access</td></tr>
+                                <tr><td class="mono" data-label="Subdomain">syslog.megacorpone.com</td><td data-label="Context">Logs</td></tr>
+                                <tr><td class="mono" data-label="Subdomain">snmp.megacorpone.com</td><td data-label="Context">Monitoring</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -529,10 +589,10 @@
                                 <tr><th>Issue</th><th>Risk</th></tr>
                             </thead>
                             <tbody>
-                                <tr><td>Missing X-Frame-Options</td><td><span class="badge medium">Medium</span></td></tr>
-                                <tr><td>Missing X-Content-Type-Options</td><td><span class="badge medium">Medium</span></td></tr>
-                                <tr><td>Directory Listing Enabled</td><td><span class="badge medium">Medium</span></td></tr>
-                                <tr><td>Sensitive robots.txt</td><td><span class="badge low">Low</span></td></tr>
+                                <tr><td data-label="Issue">Missing X-Frame-Options</td><td data-label="Risk"><span class="badge medium">Medium</span></td></tr>
+                                <tr><td data-label="Issue">Missing X-Content-Type-Options</td><td data-label="Risk"><span class="badge medium">Medium</span></td></tr>
+                                <tr><td data-label="Issue">Directory Listing Enabled</td><td data-label="Risk"><span class="badge medium">Medium</span></td></tr>
+                                <tr><td data-label="Issue">Sensitive robots.txt</td><td data-label="Risk"><span class="badge low">Low</span></td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -547,11 +607,11 @@
                                 <tr><th>Port</th><th>Service</th><th>Status</th></tr>
                             </thead>
                             <tbody>
-                                <tr><td>22</td><td>SSH</td><td><span style="color:var(--success)">Open</span></td></tr>
-                                <tr><td>80</td><td>HTTP</td><td><span style="color:var(--success)">Open</span></td></tr>
-                                <tr><td>443</td><td>HTTPS</td><td><span style="color:var(--success)">Open</span></td></tr>
-                                <tr><td>1524</td><td>Ingreslock</td><td><span style="color:var(--danger)">Open (Root Shell)</span></td></tr>
-                                <tr><td>2049</td><td>NFS</td><td><span style="color:var(--warning)">Open</span></td></tr>
+                                <tr><td data-label="Port">22</td><td data-label="Service">SSH</td><td data-label="Status"><span style="color:var(--success)">Open</span></td></tr>
+                                <tr><td data-label="Port">80</td><td data-label="Service">HTTP</td><td data-label="Status"><span style="color:var(--success)">Open</span></td></tr>
+                                <tr><td data-label="Port">443</td><td data-label="Service">HTTPS</td><td data-label="Status"><span style="color:var(--success)">Open</span></td></tr>
+                                <tr><td data-label="Port">1524</td><td data-label="Service">Ingreslock</td><td data-label="Status"><span style="color:var(--danger)">Open (Root Shell)</span></td></tr>
+                                <tr><td data-label="Port">2049</td><td data-label="Service">NFS</td><td data-label="Status"><span style="color:var(--warning)">Open</span></td></tr>
                             </tbody>
                         </table>
                     </div>
